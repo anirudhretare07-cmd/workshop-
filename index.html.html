@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0906">
+<title>CRAVEX | Food at your door in twenty minutes</title>
+<meta name="description" content="Cravex connects you to kitchens within 3 km and matches a rider before your food is ready.">
+<style>
+/* ============ Tokens ============ */
+:root{
+  --black:#0A0906;
+  --black-2:#14110A;
+  --gold-deep:#A87B1C;
+  --gold:#E4B43A;
+  --gold-light:#F7DC8B;
+  --cream:#F5EDD8;
+  --ink:#0A0906;
+  --muted:#A69C82;
+  --line:rgba(228,180,58,.24);
+  --font:"Avenir Next","Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --nav-h:72px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--cream);background:var(--black);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,p{margin:0}
+a{color:inherit;text-decoration:none}
+ul,ol{margin:0;padding:0;list-style:none}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #F7DC8B;outline-offset:3px;border-radius:6px}
+.wrap{width:min(1160px,100% - 48px);margin-inline:auto}
+section{scroll-margin-top:var(--nav-h)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ============ Buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:14px;border:0;font-weight:700;font-size:1rem;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.btn-primary{background:linear-gradient(135deg,var(--gold-light),var(--gold) 55%,var(--gold-deep));color:var(--ink);box-shadow:0 10px 0 -4px #7A5A12,0 22px 34px -10px rgba(228,180,58,.5)}
+.btn-primary:hover{transform:translateY(-3px)}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 4px 0 -2px #7A5A12}
+.btn-ghost{background:rgba(228,180,58,.06);color:var(--cream);border:1px solid rgba(228,180,58,.5)}
+.btn-ghost:hover{background:rgba(228,180,58,.16);transform:translateY(-3px)}
+
+/* ============ Nav ============ */
+.nav{position:fixed;inset:0 0 auto 0;height:var(--nav-h);z-index:50;color:var(--cream);transition:background .3s ease,box-shadow .3s ease,backdrop-filter .3s ease}
+.nav.scrolled{background:rgba(10,9,6,.84);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 1px 0 var(--line)}
+.nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:1.25rem;letter-spacing:.06em}
+.cube-wrap{width:22px;height:22px;perspective:140px}
+.cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:cube 9s linear infinite}
+.cube span{position:absolute;inset:0;border-radius:4px}
+.cube .f{transform:translateZ(11px);background:var(--gold)}
+.cube .b{transform:rotateY(180deg) translateZ(11px);background:var(--gold-deep)}
+.cube .r{transform:rotateY(90deg) translateZ(11px);background:var(--gold-light)}
+.cube .l{transform:rotateY(-90deg) translateZ(11px);background:#6B4D10}
+.cube .t{transform:rotateX(90deg) translateZ(11px);background:#FFF1BE}
+.cube .m{transform:rotateX(-90deg) translateZ(11px);background:#3A2D0B}
+@keyframes cube{from{transform:rotateX(-24deg) rotateY(0)}to{transform:rotateX(-24deg) rotateY(360deg)}}
+.nav-links{display:flex;align-items:center;gap:34px;font-weight:600;font-size:.96rem}
+.nav-links a:not(.btn){opacity:.82;transition:opacity .2s}
+.nav-links a:not(.btn):hover{opacity:1}
+.nav-links .btn{padding:10px 20px;font-size:.92rem}
+.menu-btn{display:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(228,180,58,.5);background:rgba(228,180,58,.08);color:var(--gold-light);align-items:center;justify-content:center}
+.menu-btn svg{width:22px;height:22px}
+
+/* ============ Hero ============ */
+.hero{position:relative;color:var(--cream);overflow:hidden;min-height:100vh;display:flex;align-items:center;padding:calc(var(--nav-h) + 24px) 0 80px;
+  background:
+    radial-gradient(55% 50% at 78% 42%,rgba(228,180,58,.26),transparent 70%),
+    radial-gradient(40% 40% at 8% 92%,rgba(168,123,28,.24),transparent 70%),
+    var(--black)}
+.floor{position:absolute;left:-20%;right:-20%;bottom:0;height:52%;perspective:520px;overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(to top,#000 15%,transparent 95%);mask-image:linear-gradient(to top,#000 15%,transparent 95%)}
+.floor::before{content:"";position:absolute;left:0;right:0;bottom:0;height:200%;transform-origin:50% 100%;transform:rotateX(64deg);
+  background-image:linear-gradient(rgba(228,180,58,.26) 1px,transparent 1px),linear-gradient(90deg,rgba(228,180,58,.26) 1px,transparent 1px);
+  background-size:68px 68px;animation:grid 5s linear infinite}
+@keyframes grid{to{background-position:0 68px,0 0}}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center}
+.hero h1{font-size:clamp(2.6rem,6.2vw,5rem);line-height:1.02;letter-spacing:-.035em;font-weight:800;max-width:12ch}
+.hero-copy p{margin-top:24px;max-width:46ch;font-size:1.125rem;color:rgba(245,237,216,.78)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
+.trust{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:44px;font-size:.92rem;color:rgba(245,237,216,.72)}
+.trust b{color:var(--gold-light);font-weight:700}
+
+/* 3D scene */
+.stage{position:relative;height:580px;perspective:1300px;display:grid;place-items:center;touch-action:pan-y}
+.rig{position:relative;width:420px;height:520px;transform-style:preserve-3d;transform:scale(var(--s,1)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));will-change:transform}
+.rig>*{position:absolute}
+.disc{left:50%;top:50%;width:360px;height:360px;margin:-180px 0 0 -180px;border-radius:50%;transform:translateZ(-140px);
+  background:radial-gradient(circle at 35% 30%,#FFF1BE,var(--gold-light) 18%,var(--gold) 50%,var(--gold-deep) 88%);box-shadow:0 60px 120px rgba(228,180,58,.35)}
+.orbit{left:50%;top:50%;width:540px;height:540px;margin:-270px 0 0 -270px;transform:translateZ(-10px) rotateX(74deg)}
+.orbit i{position:absolute;inset:0;border-radius:50%;border:1.5px dashed rgba(247,220,139,.55);animation:spin 20s linear infinite}
+.orbit i::after{content:"";position:absolute;top:-7px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 22px var(--gold)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.order{left:50%;top:50%;width:296px;margin:-198px 0 0 -148px;transform:translateZ(50px);background:linear-gradient(160deg,#211B10,#0D0B07);color:var(--cream);border:1px solid rgba(228,180,58,.45);border-radius:28px;padding:22px;box-shadow:0 50px 90px rgba(0,0,0,.65),0 0 70px -10px rgba(228,180,58,.28)}
+.order-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tag{font-size:.78rem;font-weight:700;background:rgba(228,180,58,.16);color:var(--gold-light);padding:5px 10px;border-radius:999px}
+.eta{font-weight:800;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.dish{display:flex;gap:14px;align-items:center;margin-top:20px}
+.tile{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:1.7rem;background:linear-gradient(135deg,#F7DC8B,#C99A2E);flex:none}
+.dish strong{display:block;font-size:.98rem;line-height:1.25}
+.dish small{color:var(--muted);font-size:.82rem}
+.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);margin:22px 0 18px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-light),var(--gold-deep));transition:width .9s cubic-bezier(.3,.7,.2,1)}
+.timeline li{position:relative;padding:0 0 14px 28px;font-size:.9rem;color:#8C8266;transition:color .3s}
+.timeline li:last-child{padding-bottom:0}
+.timeline li::before{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;background:#0D0B07;border:2px solid #4A4230;transition:all .3s}
+.timeline li::after{content:"";position:absolute;left:5px;top:18px;bottom:-4px;width:2px;background:rgba(255,255,255,.1)}
+.timeline li:last-child::after{display:none}
+.timeline li.done{color:var(--cream)}
+.timeline li.done::before{background:var(--gold);border-color:var(--gold)}
+.timeline li.done::after{background:var(--gold)}
+.timeline li.active{color:var(--cream);font-weight:700}
+.timeline li.active::before{background:var(--gold-light);border-color:var(--gold-light);animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(247,220,139,.65)}100%{box-shadow:0 0 0 12px rgba(247,220,139,0)}}
+.chip{display:flex;align-items:center;gap:10px;padding:10px 16px 10px 12px;border-radius:16px;font-size:.86rem;font-weight:600;color:var(--cream);background:rgba(20,17,10,.55);border:1px solid rgba(228,180,58,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 20px 40px rgba(0,0,0,.45);animation:bob 5s ease-in-out infinite}
+.chip span{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:rgba(228,180,58,.22)}
+.chip.c1{left:-30px;top:60px;transform:translateZ(140px)}
+.chip.c2{right:-34px;bottom:96px;transform:translateZ(110px);animation-delay:-1.6s}
+.chip.c3{left:10px;bottom:20px;transform:translateZ(170px);animation-delay:-3.2s}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -12px}}
+
+/* ============ Marquee ============ */
+.marquee{background:#000;color:var(--cream);overflow:hidden;padding:22px 0;border-block:1px solid var(--line)}
+.track{display:flex;width:max-content;animation:marquee 34s linear infinite}
+.track li{display:flex;align-items:center;font-size:1.5rem;font-weight:700;letter-spacing:-.01em;color:rgba(245,237,216,.86);white-space:nowrap}
+.track li::after{content:"";width:10px;height:10px;margin:0 34px;border-radius:3px;background:var(--gold);transform:rotate(45deg)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ============ Shared section styles ============ */
+.block{padding:clamp(72px,10vw,128px) 0}
+.head{max-width:640px;margin-bottom:56px}
+.head h2{font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.08;letter-spacing:-.03em;font-weight:800}
+.head p{margin-top:16px;color:var(--muted);font-size:1.08rem}
+
+/* ============ How it works ============ */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;perspective:1200px}
+.reveal{opacity:1}
+.js .reveal{opacity:0;transform:perspective(1000px) rotateX(16deg) translateY(36px);transform-origin:50% 100%;transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.js .reveal.in{opacity:1;transform:none}
+.js .reveal:nth-child(2){transition-delay:.12s}
+.js .reveal:nth-child(3){transition-delay:.24s}
+.tilt{position:relative;transform-style:preserve-3d;transition:transform .18s ease-out;will-change:transform}
+.tilt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:radial-gradient(420px circle at var(--gx,50%) var(--gy,0%),var(--glare,rgba(228,180,58,.16)),transparent 45%)}
+.tilt:hover::after{opacity:1}
+.step{height:100%;background:linear-gradient(160deg,#1B160D,#0F0C07);border-radius:26px;padding:34px 30px 36px;border:1px solid var(--line);box-shadow:0 34px 60px -30px rgba(0,0,0,.9)}
+.big-num{display:block;font-size:5.2rem;line-height:1;font-weight:900;color:var(--gold-light);transform:translateZ(46px);
+  text-shadow:1px 1px 0 #D9AC38,2px 2px 0 #C29A2F,3px 3px 0 #A98626,4px 4px 0 #8F711E,5px 5px 0 #765C17,6px 6px 0 #5E4911,7px 14px 22px rgba(0,0,0,.7)}
+.step h3{margin-top:26px;font-size:1.35rem;letter-spacing:-.02em;transform:translateZ(24px)}
+.step p{margin-top:10px;color:var(--muted);transform:translateZ(12px)}
+
+/* ============ Cravings carousel ============ */
+.cravings{background:linear-gradient(180deg,#0F0C07,#0A0906);border-block:1px solid var(--line);overflow:hidden}
+.cravings .head{margin-inline:auto;text-align:center}
+.carousel{--cw:250px;--ch:330px;position:relative;height:calc(var(--ch) + 90px);perspective:1500px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.carousel.drag{cursor:grabbing}
+.ring3d{position:absolute;left:50%;top:50%;width:var(--cw);height:var(--ch);margin:calc(var(--ch) / -2) 0 0 calc(var(--cw) / -2);transform-style:preserve-3d}
+.crave{position:absolute;inset:0;border-radius:26px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;color:#1A1405;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:linear-gradient(150deg,var(--g1),var(--g2));box-shadow:0 30px 50px -20px rgba(0,0,0,.8);transform-style:preserve-3d}
+.crave .emoji{font-size:4.6rem;line-height:1;transform:translateZ(40px);filter:drop-shadow(0 16px 12px rgba(0,0,0,.25))}
+.crave h3{font-size:1.5rem;letter-spacing:-.02em}
+.crave p{font-size:.94rem;opacity:.9;margin-top:4px}
+.crave .time{align-self:flex-start;margin-top:14px;padding:6px 12px;border-radius:999px;background:rgba(10,9,6,.16);font-weight:700;font-size:.85rem}
+.crave.dark{color:var(--cream);border:1px solid rgba(228,180,58,.5)}
+.crave.dark h3{color:var(--gold-light)}
+.crave.dark .time{background:rgba(228,180,58,.2);color:var(--gold-light)}
+.controls{display:flex;justify-content:center;gap:14px;margin-top:34px}
+.round{width:52px;height:52px;border-radius:50%;border:1.5px solid rgba(228,180,58,.5);background:var(--black-2);color:var(--gold-light);display:grid;place-items:center;transition:transform .2s,background .2s,color .2s}
+.round:hover{background:var(--gold);color:var(--ink);transform:translateY(-3px)}
+.round svg{width:20px;height:20px}
+
+/* ============ Numbers ============ */
+.numbers{background:radial-gradient(60% 80% at 90% 0%,rgba(228,180,58,.16),transparent 70%),linear-gradient(160deg,#17130B,#0A0906);color:var(--cream)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.stat{padding-left:22px;border-left:2px solid var(--line)}
+.stat b{display:block;font-size:clamp(2.4rem,4.6vw,3.6rem);line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--gold)}
+.stat span{display:block;margin-top:8px;color:rgba(245,237,216,.75)}
+
+/* ============ Join ============ */
+.join-card{position:relative;overflow:hidden;border-radius:32px;padding:clamp(32px,6vw,72px);color:var(--cream);border:1px solid var(--line);display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;
+  background:radial-gradient(70% 90% at 100% 0%,rgba(228,180,58,.32),transparent 70%),radial-gradient(50% 60% at 0% 100%,rgba(168,123,28,.3),transparent 70%),var(--black-2);
+  box-shadow:0 50px 90px -40px rgba(0,0,0,.9);--glare:rgba(247,220,139,.12)}
+.join-card>*{transform:translateZ(30px)}
+.join-card h2{font-size:clamp(2rem,4vw,3rem);line-height:1.08;letter-spacing:-.03em}
+.join-card p{margin-top:14px;color:rgba(245,237,216,.78);max-width:42ch}
+.form{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;gap:10px;padding:8px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(228,180,58,.35)}
+.field input{flex:1;min-width:0;padding:12px 14px;border:0;background:transparent;color:var(--cream);font:inherit;font-size:1rem}
+.field input::placeholder{color:rgba(245,237,216,.5)}
+.field input:focus-visible{outline:none}
+.field:focus-within{border-color:var(--gold-light)}
+.field .btn{padding:12px 22px}
+.msg{min-height:1.6em;font-size:.94rem}
+.msg.err{color:#FFA595}
+.msg.ok{color:var(--gold-light)}
+
+/* ============ Footer ============ */
+.footer{background:#000;color:rgba(245,237,216,.68);border-top:1px solid var(--line);padding:56px 0 40px}
+.footer .wrap{display:flex;flex-wrap:wrap;gap:24px 48px;align-items:center;justify-content:space-between}
+.footer .logo{color:var(--cream)}
+.footer ul{display:flex;flex-wrap:wrap;gap:8px 28px;font-size:.94rem}
+.footer a:hover{color:var(--gold-light)}
+.footer small{width:100%;padding-top:24px;border-top:1px solid rgba(228,180,58,.16);font-size:.85rem}
+
+/* ============ Responsive ============ */
+@media (max-width:980px){
+  .hero{min-height:auto}
+  .hero-grid{grid-template-columns:1fr}
+  .hero h1{max-width:14ch}
+  .stage{height:500px;--s:.86}
+  .steps{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .join-card{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .menu-btn{display:inline-flex}
+  .nav-links{display:none}
+  .nav.open{background:rgba(10,9,6,.97)}
+  .nav.open .nav-links{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:flex-start;gap:20px;padding:24px;background:rgba(10,9,6,.97);border-top:1px solid var(--line)}
+}
+@media (max-width:520px){
+  .stage{height:440px;--s:.68}
+  .carousel{--cw:210px;--ch:290px}
+  .field{flex-direction:column}
+  .stats{grid-template-columns:1fr}
+  .crave .emoji{font-size:3.8rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .js .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a href="#top" class="logo" aria-label="CRAVEX home">
+      <span class="cube-wrap" aria-hidden="true">
+        <span class="cube"><span class="f"></span><span class="b"></span><span class="r"></span><span class="l"></span><span class="t"></span><span class="m"></span></span>
+      </span>
+      CRAVEX
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#cravings">Cravings</a>
+      <a href="#numbers">Numbers</a>
+      <a href="#join" class="btn btn-primary">Get early access</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero" aria-labelledby="heroTitle">
+  <div class="floor" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 id="heroTitle">Whatever you crave, at your door in twenty minutes.</h1>
+      <p>Cravex connects you to kitchens within 3 km and matches a rider before your food is ready. Live prep times mean the estimate you see is the one you get.</p>
+      <div class="hero-cta">
+        <a href="#join" class="btn btn-primary">Get early access</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+      <div class="trust">
+        <span><b>4.9</b> average rating</span>
+        <span><b>2,400</b> partner kitchens</span>
+        <span><b>Free</b> delivery on your first order</span>
+      </div>
+    </div>
+
+    <div class="stage" id="stage" aria-hidden="true">
+      <div class="rig" id="rig">
+        <div class="disc"></div>
+        <div class="orbit"><i></i></div>
+
+        <div class="order">
+          <div class="order-top"><span class="tag">Order CX-2841</span><span class="eta" id="eta">18 min</span></div>
+          <div class="dish">
+            <div class="tile">🍜</div>
+            <div><strong>Miso ramen, extra egg</strong><small>Sakura Kitchen, 1.4 km away</small></div>
+          </div>
+          <div class="bar"><i id="bar"></i></div>
+          <ol class="timeline" id="timeline">
+            <li>Order confirmed</li>
+            <li>Chef is cooking</li>
+            <li>Rider on the way</li>
+            <li>Delivered</li>
+          </ol>
+        </div>
+
+        <div class="chip c1"><span>🛵</span>Ravi is 0.8 km away</div>
+        <div class="chip c2"><span>⭐</span>4.9 from 12k reviews</div>
+        <div class="chip c3"><span>🎁</span>Free delivery applied</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <ul class="track" id="track">
+    <li>Ramen</li><li>Biryani</li><li>Wood-fired pizza</li><li>Tacos</li><li>Dosa</li><li>Poke bowls</li><li>Smash burgers</li><li>Dumplings</li><li>Falafel</li><li>Gelato</li>
+  </ul>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="block" id="how" aria-labelledby="howTitle">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="howTitle">From craving to doorbell in three steps</h2>
+      <p>No guesswork on timing. Every step shows what is happening and who is handling it.</p>
+    </div>
+    <div class="steps">
+      <div class="reveal">
+        <article class="step tilt">
+          <span class="big-num">1</span>
+          <h3>Pick a nearby kitchen</h3>
+          <p>Each kitchen lists its live prep time, so the delivery estimate you see at checkout is the one you get.</p>
+        </article>
+      </div>
+      <div class="reveal">
+        <article class="step tilt">
+          <span class="big-num">2</span>
+          <h3>Watch it get made</h3>
+          <p>Kitchens confirm within a minute. We match a rider before the food is ready, so nothing sits and waits.</p>
+        </article>
+      </div>
+      <div class="reveal">
+        <article class="step tilt">
+          <span class="big-num">3</span>
+          <h3>Meet your rider</h3>
+          <p>Follow the rider on the map and choose whether they knock, call, or leave it at the door.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CRAVINGS (3D carousel) ============ -->
+<section class="block cravings" id="cravings" aria-labelledby="cravTitle">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="cravTitle">Pick a craving</h2>
+      <p>Drag the ring or use the arrows. Every dish is packed to travel, from hot broth to cold gelato.</p>
+    </div>
+    <div class="carousel" id="carousel" role="group" aria-label="Cuisine carousel">
+      <div class="ring3d" id="ring">
+        <article class="crave" style="--g1:#F7DC8B;--g2:#B8862B"><span class="emoji">🍜</span><div><h3>Ramen</h3><p>Broth simmered for twelve hours</p><span class="time">16 min</span></div></article>
+        <article class="crave dark" style="--g1:#2A2314;--g2:#0D0B07"><span class="emoji">🍕</span><div><h3>Pizza</h3><p>Wood-fired in ninety seconds</p><span class="time">22 min</span></div></article>
+        <article class="crave" style="--g1:#FFE9A8;--g2:#D4A62F"><span class="emoji">🌮</span><div><h3>Tacos</h3><p>Tortillas pressed to order</p><span class="time">14 min</span></div></article>
+        <article class="crave dark" style="--g1:#241D10;--g2:#0A0906"><span class="emoji">🍛</span><div><h3>Curry</h3><p>Slow-cooked, mild to fiery</p><span class="time">19 min</span></div></article>
+        <article class="crave" style="--g1:#E4B43A;--g2:#8F6A16"><span class="emoji">🍣</span><div><h3>Sushi</h3><p>Cut minutes before dispatch</p><span class="time">24 min</span></div></article>
+        <article class="crave dark" style="--g1:#2E2513;--g2:#0F0C07"><span class="emoji">🍦</span><div><h3>Dessert</h3><p>Kept cold in insulated bags</p><span class="time">12 min</span></div></article>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="round" id="prev" aria-label="Previous cuisine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="round" id="next" aria-label="Next cuisine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NUMBERS ============ -->
+<section class="block numbers" id="numbers" aria-labelledby="numTitle">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="numTitle">Fast, and consistently so</h2>
+      <p style="color:rgba(245,237,216,.7)">Replace these placeholder figures with your real data before launch.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b data-count="2400" data-suffix="+">0</b><span>Partner kitchens</span></div>
+      <div class="stat"><b data-count="18" data-suffix=" min">0</b><span>Median delivery time</span></div>
+      <div class="stat"><b data-count="4.9" data-decimals="1">0</b><span>Average rating</span></div>
+      <div class="stat"><b data-count="1200000" data-format="compact">0</b><span>Orders delivered</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOIN ============ -->
+<section class="block" id="join" aria-labelledby="joinTitle">
+  <div class="wrap">
+    <div class="join-card tilt">
+      <div>
+        <h2 id="joinTitle">Get early access</h2>
+        <p>Cravex is opening city by city. Leave your email and we will tell you the day it reaches your area.</p>
+      </div>
+      <form class="form" id="form" novalidate>
+        <label class="sr-only" for="email">Email address</label>
+        <div class="field">
+          <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+          <button class="btn btn-primary" type="submit" id="submitBtn">Join the list</button>
+        </div>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <a href="#top" class="logo" aria-label="CRAVEX home">
+      <span class="cube-wrap" aria-hidden="true">
+        <span class="cube"><span class="f"></span><span class="b"></span><span class="r"></span><span class="l"></span><span class="t"></span><span class="m"></span></span>
+      </span>
+      CRAVEX
+    </a>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#cravings">Cravings</a></li>
+      <li><a href="#numbers">Numbers</a></li>
+      <li><a href="#join">Early access</a></li>
+    </ul>
+    <small>&copy; <span id="year">2026</span> Cravex. All rights reserved.</small>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const doc = document.documentElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  doc.classList.add('js');
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- Footer year ---------- */
+  $('#year').textContent = new Date().getFullYear();
+
+  /* ---------- Nav: scrolled state + mobile menu ---------- */
+  const nav = $('#nav'), menuBtn = $('#menuBtn');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  menuBtn.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  $$('#navLinks a').forEach(a => a.addEventListener('click', () => {
+    nav.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }));
+
+  /* ---------- Marquee: duplicate items for a seamless loop ---------- */
+  const track = $('#track');
+  track.innerHTML += track.innerHTML;
+
+  /* ---------- Hero 3D scene: pointer parallax + idle sway ---------- */
+  const stage = $('#stage'), rig = $('#rig');
+  let heroVisible = true, hover = false;
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; }, { threshold: 0 }).observe(stage);
+
+  stage.addEventListener('pointermove', e => {
+    const r = stage.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    ty = px * 30;
+    tx = -py * 22;
+    hover = true;
+  });
+  stage.addEventListener('pointerleave', () => { hover = false; });
+
+  function heroLoop(t) {
+    if (heroVisible) {
+      if (!hover) {
+        ty = Math.sin(t / 2600) * 14;
+        tx = Math.cos(t / 3200) * 6 - 2;
+      }
+      cx += (tx - cx) * 0.07;
+      cy += (ty - cy) * 0.07;
+      rig.style.setProperty('--rx', cx.toFixed(2) + 'deg');
+      rig.style.setProperty('--ry', cy.toFixed(2) + 'deg');
+    }
+    requestAnimationFrame(heroLoop);
+  }
+  if (!reduce) requestAnimationFrame(heroLoop);
+
+  /* ---------- Live order tracker ---------- */
+  const steps = $$('#timeline li');
+  const etaEl = $('#eta'), barEl = $('#bar');
+  const etaValues = [18, 12, 6, 0];
+  function setStep(n) {
+    steps.forEach((li, k) => {
+      li.classList.toggle('done', k < n || n === 3);
+      li.classList.toggle('active', k === n && n < 3);
+    });
+    etaEl.textContent = n === 3 ? 'Arrived' : etaValues[n] + ' min';
+    barEl.style.width = (n / 3 * 100) + '%';
+  }
+  if (reduce) {
+    setStep(2);
+  } else {
+    let step = 0;
+    setStep(step);
+    const tick = () => {
+      step = (step + 1) % 4;
+      setStep(step);
+      setTimeout(tick, step === 3 ? 3200 : 2400);
+    };
+    setTimeout(tick, 2400);
+  }
+
+  /* ---------- Scroll reveal ---------- */
+  const revealObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); obs.unobserve(en.target); }
+    });
+  }, { threshold: 0.2 });
+  $$('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ---------- Tilt cards ---------- */
+  if (canHover && !reduce) {
+    $$('.tilt').forEach(el => {
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width;
+        const y = (e.clientY - r.top) / r.height;
+        const max = el.classList.contains('join-card') ? 3 : 10;
+        el.style.transform = `perspective(1000px) rotateX(${((0.5 - y) * max * 1.2).toFixed(2)}deg) rotateY(${((x - 0.5) * max * 1.4).toFixed(2)}deg)`;
+        el.style.setProperty('--gx', (x * 100).toFixed(1) + '%');
+        el.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
+      });
+      el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  /* ---------- 3D cuisine carousel ---------- */
+  const carousel = $('#carousel'), ring = $('#ring');
+  const cards = Array.from(ring.children);
+  const count = cards.length, stepDeg = 360 / count;
+  let angle = 0, target = 0, radius = 0;
+  let dragging = false, lastX = 0, paused = false, carVisible = false;
+
+  function layout() {
+    const w = cards[0].offsetWidth;
+    radius = Math.round((w / 2) / Math.tan(Math.PI / count)) + 36;
+    cards.forEach((c, i) => { c.style.transform = `rotateY(${i * stepDeg}deg) translateZ(${radius}px)`; });
+  }
+  function render() {
+    ring.style.transform = `translateZ(${-radius}px) rotateY(${angle.toFixed(2)}deg)`;
+    cards.forEach((c, i) => {
+      let rel = (((i * stepDeg + angle) % 360) + 360) % 360;
+      if (rel > 180) rel -= 360;
+      c.style.opacity = (0.3 + 0.7 * Math.max(0, Math.cos(rel * Math.PI / 180))).toFixed(2);
+    });
+  }
+  function carLoop() {
+    if (carVisible) {
+      if (!reduce && !paused && !dragging) target -= 0.18;
+      angle += (target - angle) * 0.09;
+      render();
+    }
+    requestAnimationFrame(carLoop);
+  }
+  layout(); render();
+  window.addEventListener('resize', () => { layout(); render(); });
+  new IntersectionObserver(([e]) => { carVisible = e.isIntersecting; }, { threshold: 0 }).observe(carousel);
+  requestAnimationFrame(carLoop);
+
+  carousel.addEventListener('pointerenter', () => { paused = true; });
+  carousel.addEventListener('pointerleave', () => { paused = false; });
+  carousel.addEventListener('pointerdown', e => {
+    dragging = true; lastX = e.clientX;
+    carousel.classList.add('drag');
+    carousel.setPointerCapture(e.pointerId);
+  });
+  carousel.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    target += (e.clientX - lastX) * 0.35;
+    lastX = e.clientX;
+  });
+  const endDrag = () => { dragging = false; carousel.classList.remove('drag'); };
+  carousel.addEventListener('pointerup', endDrag);
+  carousel.addEventListener('pointercancel', endDrag);
+
+  const snap = dir => { target = Math.round(target / stepDeg) * stepDeg + dir * stepDeg; };
+  $('#next').addEventListener('click', () => snap(-1));
+  $('#prev').addEventListener('click', () => snap(1));
+
+  /* ---------- Animated counters ---------- */
+  function formatValue(el, v) {
+    const dec = +(el.dataset.decimals || 0);
+    const suffix = el.dataset.suffix || '';
+    if (el.dataset.format === 'compact') {
+      return (v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : Math.round(v).toLocaleString());
+    }
+    return (dec ? v.toFixed(dec) : Math.round(v).toLocaleString()) + suffix;
+  }
+  const counterObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target, end = +el.dataset.count;
+      obs.unobserve(el);
+      if (reduce) { el.textContent = formatValue(el, end); return; }
+      const start = performance.now(), dur = 1600;
+      const run = now => {
+        const p = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = formatValue(el, end * eased);
+        if (p < 1) requestAnimationFrame(run);
+      };
+      requestAnimationFrame(run);
+    });
+  }, { threshold: 0.6 });
+  $$('[data-count]').forEach(el => counterObserver.observe(el));
+
+  /* ---------- Early access form (front-end demo) ---------- */
+  const form = $('#form'), email = $('#email'), msg = $('#msg'), submitBtn = $('#submitBtn');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const value = email.value.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+    msg.className = 'msg';
+    if (!valid) {
+      msg.textContent = 'Enter a valid email address, like name@example.com.';
+      msg.classList.add('err');
+      email.focus();
+      return;
+    }
+    /* Connect this to your backend or form service here. */
+    msg.textContent = 'You are on the list. We will email ' + value + ' when Cravex opens near you.';
+    msg.classList.add('ok');
+    submitBtn.textContent = 'Added';
+    submitBtn.disabled = true;
+    email.disabled = true;
+  });
+})();
+</script>
+</body>
+</html>
